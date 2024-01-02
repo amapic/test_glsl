@@ -21,10 +21,14 @@
   },
   "include": [
     "next-env.d.ts",
-    "**/*.ts",
-    "**/*.tsx"
+    "component/*.ts",
+    "component/*.tsx"
   ],
   "exclude": [
-    "node_modules"
+    "node_modules",
+    "pages",
+    "public",
+    "slide",
+    "test"
   ]
 }
