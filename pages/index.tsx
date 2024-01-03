@@ -34,11 +34,18 @@ import RoundedBoxGeometry from "./../boxgeo.js";
 
 // import { OrbitControls } from "@react-three/drei";
 import { useMediaQuery } from "react-responsive";
-import EnsembleImage from "@/component/EnsembleImage";
-
+// @ts-expect-error TS(2307): Cannot find module '@/component/EnsembleImage' or ... Remove this comment to see the full error messageimport EnsembleImage from "@/component/EnsembleImage";
+import { EnsembleImage } from "../component/EnsembleImage";
 extend({ RoundedBoxGeometry });
 
-const Cyl = forwardRef(({ rotation, length, position }, ref) => (
+interface Props {
+  rotation: THREE.Euler;
+  length: number;
+  position: THREE.Vector3;
+}
+type Ref = THREE.Mesh;
+
+const Cyl = forwardRef<Ref, Props>(({ rotation, length, position }, ref) => (
   <mesh ref={ref} rotation={rotation} position={position}>
     <cylinderGeometry args={[0.03, 0.03, length, 16]} />
     <meshStandardMaterial color="white" />
@@ -133,6 +140,7 @@ function Home() {
                 far: 20000,
                 zoom: 1,
                 position: [0, 0, 20],
+                // @ts-expect-error TS(2322): Type '{ near: number; far: number; zoom: number; p... Remove this comment to see the full error message
                 maxPolarAngle: 0.85,
               }}
             >
@@ -174,7 +182,7 @@ function Home() {
   );
 }
 
-const Delayed = ({ start }) => {
+const Delayed = ({ start }: any) => {
   return (
     <>
       <Html center className="loading" children="Loading..." />
@@ -182,7 +190,7 @@ const Delayed = ({ start }) => {
   );
 };
 
-export function TextureScene({ start }) {
+export function TextureScene({ start }: any) {
   // const camera_x = useRef(0);
   var camera_x;
   var tt = null;
@@ -225,6 +233,7 @@ export function TextureScene({ start }) {
             <TraitBlanc
               ref={ref33}
               key={Math.random()}
+              // @ts-expect-error TS(2322): Type '{ ref: MutableRefObject<undefined>; key: num... Remove this comment to see the full error message
               rotation={[Math.PI * gaussianRand(), Math.PI * gaussianRand(), 0]}
             />
           </>
@@ -234,10 +243,15 @@ export function TextureScene({ start }) {
   );
 }
 
-const TraitBlanc = forwardRef(({ rotation, position }, ref) => {
-  const ref2 = useRef();
+interface Props2 {
+  rotation: THREE.Euler;
+  position: THREE.Vector3;
+}
+type Ref2 = THREE.Mesh;
+const TraitBlanc = forwardRef<Ref2, Props2>(({ rotation, position }, ref) => {
+  const ref2 = useRef<THREE.Mesh>();
   let points = [];
-  let direction;
+  let direction: any;
   //vitesse de déplacement
   let speed = 0.1 * (1 + 2 * Math.random());
   //espace entre les deux points
@@ -311,6 +325,7 @@ const TraitBlanc = forwardRef(({ rotation, position }, ref) => {
   });
 
   return (
+    // @ts-expect-error TS(2322): Type 'MutableRefObject<undefined>' is not assignab... Remove this comment to see the full error message
     <line key={Math.random()} ref={ref2}>
       <bufferGeometry attach="geometry" />
       <lineBasicMaterial linewidth="10.0" color="white" />

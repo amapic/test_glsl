@@ -25,6 +25,7 @@ export default function Ttext() {
     useFrame((state, delta) => {
       
       // @ts-expect-error TS(2339): Property 'position' does not exist on type 'Forwar... Remove this comment to see the full error message
+      
       reftext.current.position.y = lerp(
         
         // @ts-expect-error TS(2339): Property 'position' does not exist on type 'Forwar... Remove this comment to see the full error message

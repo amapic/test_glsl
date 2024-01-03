@@ -14,7 +14,7 @@ import {
   extend,
   useThree,
 } from "@react-three/fiber";
-import WaveShaderMaterial from "../component/shader";
+import WaveShaderMaterial from "./shader";
 extend({ WaveShaderMaterial });
 import {
   Text,
@@ -24,7 +24,7 @@ import Ttext from "./Ttext"
 import {TextureLoader,SRGBColorSpace} from "three";
 import { lerp, damp } from "three/src/math/MathUtils";
 import { Physics } from "@react-three/cannon";
-export default function EnsembleImage({ position, camera_x }) {
+export default function EnsembleImage({ position, camera_x }:{position:THREE.Vector3,camera_x:number}):THREE.Mesh {
   const ref = useRef();
 
   const mouseTarget = useRef({ x: 0, y: 0 });
