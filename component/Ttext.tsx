@@ -24,8 +24,10 @@ export default function Ttext() {
   
     useFrame((state, delta) => {
       
+      // @ts-expect-error TS(2339): Property 'position' does not exist on type 'Forwar... Remove this comment to see the full error message
       reftext.current.position.y = lerp(
         
+        // @ts-expect-error TS(2339): Property 'position' does not exist on type 'Forwar... Remove this comment to see the full error message
         reftext.current.position.y,
         mouseTarget.current.y,
         0.3
@@ -45,8 +47,10 @@ export default function Ttext() {
       }
   
       if (compteurCycle.current == 3) {
+        // @ts-expect-error TS(2339): Property 'outlineColor' does not exist on type 'Fo... Remove this comment to see the full error message
         reftext.current.outlineColor = "black";
       } else {
+        // @ts-expect-error TS(2339): Property 'outlineColor' does not exist on type 'Fo... Remove this comment to see the full error message
         reftext.current.outlineColor = "green";
       }
     });
@@ -67,6 +71,7 @@ export default function Ttext() {
           anchorY="middle" // default
           color="white"
 
+          // @ts-expect-error TS(2322): Type '{ children: string; ref: MutableRefObject<Fo... Remove this comment to see the full error message
           toneMapped={false}
           position={[0, 15, 13.2]}
           font={"/slide/Roboto-Regular.ttf"}
