@@ -27,7 +27,6 @@
   ],
   "exclude": [
     "node_modules",
-    "pages",
     "public",
     "slide",
     "test"
