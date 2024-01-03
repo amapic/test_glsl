@@ -14,12 +14,18 @@ import {Text} from "@react-three/drei";
 export default function Ttext() {
     const y = useRef(0);
     const delayClock = useRef(0);
-    const reftext = useRef();
+    
     const compteurCycle = useRef(1);
     let mouseTarget = useRef({ y: 0 });
+
+    type TypeText = typeof Text;
+
+    const reftext = useRef<TypeText>(null!);
   
     useFrame((state, delta) => {
+      
       reftext.current.position.y = lerp(
+        
         reftext.current.position.y,
         mouseTarget.current.y,
         0.3
@@ -46,7 +52,7 @@ export default function Ttext() {
     });
   
     useEffect(() => {
-      const setTargetMouse = (event) => {
+      const setTargetMouse = (event: any) => {
         mouseTarget.current.y += event.deltaY / 100;
       };
   
@@ -60,6 +66,7 @@ export default function Ttext() {
           anchorX="center" // default
           anchorY="middle" // default
           color="white"
+
           toneMapped={false}
           position={[0, 15, 13.2]}
           font={"/slide/Roboto-Regular.ttf"}

@@ -20,15 +20,7 @@ import {
   extend,
   useThree,
 } from "@react-three/fiber";
-// import {
-//   postprocessing,
-//   EffectComposer,
-//   Bloom,
-// } from "@react-three/postprocessing";
-// import { GLSL } from "gl-react";
-// import { lerp, damp } from "three/src/math/MathUtils";
-// import { useControls } from "leva";
-// import WaveShaderMaterial from "../component/shader2";
+
 import RoundedBoxGeometry from "./../boxgeo.js";
 // import CookieConsent from "../component/CookieConsent";
 
@@ -37,7 +29,7 @@ import { useMediaQuery } from "react-responsive";
 import EnsembleImage from "@/component/EnsembleImage";
 
 extend({ RoundedBoxGeometry });
-
+../boxgeo.js
 const Cyl = forwardRef(({ rotation, length, position }, ref) => (
   <mesh ref={ref} rotation={rotation} position={position}>
     <cylinderGeometry args={[0.03, 0.03, length, 16]} />
