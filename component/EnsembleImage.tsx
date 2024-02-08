@@ -15,30 +15,34 @@ import {
   useThree,
 } from "@react-three/fiber";
 import WaveShaderMaterial from "./shader";
-extend({ WaveShaderMaterial });
-import {
-  Text,
-} from "@react-three/drei";
+// extend({ WaveShaderMaterial });
+import { Text } from "@react-three/drei";
 
-import Ttext from "./Ttext"
-import {TextureLoader,SRGBColorSpace} from "three";
+import Ttext from "./Ttext";
+import { TextureLoader, SRGBColorSpace } from "three";
 import { lerp, damp } from "three/src/math/MathUtils";
 import { Physics } from "@react-three/cannon";
-export default function EnsembleImage({ position, camera_x }:{position:THREE.Vector3,camera_x:number}):THREE.Mesh {
-  const ref = useRef();
+export default function EnsembleImage({
+  position,
+  camera_x,
+}: {
+  position: THREE.Vector3;
+  camera_x: number;
+}): THREE.Mesh {
+  const ref = useRef<THREE.Group>(null);
 
   const mouseTarget = useRef({ x: 0, y: 0 });
   const mouse = useRef({ x: 0, y: 0 });
 
   const compteurCycle = useRef(1);
 
-  const couche1 = useRef();
+  const couche1 = useRef<THREE.Mesh>(null!);
 
-  const couche2 = useRef();
+  const couche2 = useRef<THREE.Mesh>(null!);
 
-  const couche3 = useRef();
+  const couche3 = useRef<THREE.Mesh>(null!);
 
-  const couche3_bis = useRef();
+  const couche3_bis = useRef<THREE.Mesh>(null!);
 
   const listeRef = [couche1, couche2, couche3, couche3_bis];
 
@@ -68,6 +72,7 @@ export default function EnsembleImage({ position, camera_x }:{position:THREE.Vec
     });
 
     for (let i = 0; i < listeRef.length; i++) {
+      // @ts-expect-error TS(2532): Object is possibly 'undefined'.
       listeRef[i].current.material.resolution =
         window.innerHeight / window.innerWidth;
     }
@@ -77,11 +82,14 @@ export default function EnsembleImage({ position, camera_x }:{position:THREE.Vec
     delayClock.current += delta;
 
     for (let i = 0; i < listeRef.length; i++) {
+      // @ts-expect-error TS(2532): Object is possibly 'undefined'.
       listeRef[i].current.material.uTime = state.clock.getElapsedTime();
     }
 
+    // @ts-expect-error TS(2532): Object is possibly 'undefined'.
     if (couche2.current.material.compteurCycle == 0) {
       for (let i = 0; i < listeRef.length; i++) {
+        // @ts-expect-error TS(2532): Object is possibly 'undefined'.
         listeRef[i].current.material.compteurCycle = compteurCycle.current;
       }
     }
@@ -126,11 +134,13 @@ export default function EnsembleImage({ position, camera_x }:{position:THREE.Vec
     );
   });
 
+  // @ts-expect-error TS(2345): Argument of type 'typeof TextureLoader' is not ass... Remove this comment to see the full error message
   const image = useLoader(TextureLoader, "/slide/concat9.avif");
   image.colorSpace = SRGBColorSpace;
 
   const image_size = [1024 / 10, 742 / 10];
 
+  // @ts-expect-error TS(2345): Argument of type 'typeof TextureLoader' is not ass... Remove this comment to see the full error message
   const mask = useLoader(TextureLoader, "/slide/mask5.avif");
   mask.colorSpace = SRGBColorSpace;
 
@@ -152,99 +162,14 @@ export default function EnsembleImage({ position, camera_x }:{position:THREE.Vec
   // const image1 = useLoader(THREE.TextureLoader, "/slide/nature_morte.jpg");
   // mask.colorSpace = THREE.SRGBColorSpace;
 
+  // @ts-expect-error TS(2740): Type 'ReactElement<any, any>' is missing the follo... Remove this comment to see the full error message
   return (
-    <group position={position} ref={ref}>
-      <Physics allowSleep={false} gravity={[0, 0, 0]}>
-        <Ttext  />
-      </Physics>
-
-      <mesh ref={couche1} position={[0, 0, 4]}>
-        <planeGeometry args={[image_size[0], image_size[1], 1, 1]} />
-        <waveShaderMaterial
-          // ref={shader2}
-          uAlphaMap={image}
-          // map={image}
-          // map2={image2}
-          // image3={image3}
-          // image1={image1}
-          uTexture={image}
-          fond={true}
-          toneMapped={false}
-          camera_x={camera_x}
-          compteurCycle={compteurCycle.current}
-          color="black"
-          filigrane={false}
-          _resolution={0.0}
-          // transition_shape={transition_shape}
-        />
-      </mesh>
-
-      <mesh ref={couche2} position={[0, 0, 8]}>
-        <planeGeometry args={[image_size[0], image_size[1], 1, 1]} />
-        <waveShaderMaterial
-          // ref={shader3}
-          uAlphaMap={image}
-          // map={map}
-          // map2={image2}
-          uTexture={image}
-          transparent
-          fond={false}
-          toneMapped={false}
-          camera_x={camera_x}
-          compteurCycle={compteurCycle.current}
-          filigrane={false}
-          color="black"
-          _resolution={0.0}
-          // transition_shape={transition_shape}
-          // image3={image3}
-          // image1={image1}
-        />
-      </mesh>
-
-      <mesh ref={couche3} position={[0, 0, 12]}>
-        <planeGeometry args={[image_size[0], image_size[1], 1, 1]} />
-        <waveShaderMaterial
-          // ref={shader}
-          uAlphaMap={image}
-          // map={map}
-          // map2={image2}
-          uTexture={image}
-          transparent
-          fond={false}
-          toneMapped={false}
-          camera_x={camera_x}
-          compteurCycle={compteurCycle.current}
-          filigrane={false}
-          color="black"
-          _resolution={0.0}
-          // transition_shape={transition_shape}
-          // image3={image3}
-          // image1={image1}
-        />
-      </mesh>
-
-      <mesh ref={couche3_bis} position={[0, 0, 12.1]}>
-        <planeGeometry args={[image_size[0], image_size[1], 1, 1]} />
-        <waveShaderMaterial
-          uAlphaMap={image}
-          // map={map}
-          // map2={image2}
-          uTexture={image}
-          transparent
-          fond={false}
-          toneMapped={false}
-          camera_x={camera_x}
-          compteurCycle={compteurCycle.current}
-          filigrane={true}
-          color="black"
-          _resolution={0.0}
-          // transition_shape={transition_shape}
-          // image3={image3}
-          // image1={image1}
-        />
-      </mesh>
-    </group>
+    <>
+      <group position={position} ref={ref}>
+        <Physics allowSleep={false} gravity={[0, 0, 0]}>
+          <Ttext />
+        </Physics>
+      </group>
+    </>
   );
 }
-
-

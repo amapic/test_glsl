@@ -34,8 +34,9 @@ import RoundedBoxGeometry from "./../boxgeo.js";
 
 // import { OrbitControls } from "@react-three/drei";
 import { useMediaQuery } from "react-responsive";
-// @ts-expect-error TS(2307): Cannot find module '@/component/EnsembleImage' or ... Remove this comment to see the full error messageimport EnsembleImage from "@/component/EnsembleImage";
+// @ts-expect-error TS(2614): Module '"../component/EnsembleImage"' has no expor... Remove this comment to see the full error message
 import { EnsembleImage } from "../component/EnsembleImage";
+import Ttext from "../component/Ttext";
 extend({ RoundedBoxGeometry });
 
 interface Props {
@@ -233,9 +234,11 @@ export function TextureScene({ start }: any) {
             <TraitBlanc
               ref={ref33}
               key={Math.random()}
-              // @ts-expect-error TS(2322): Type '{ ref: MutableRefObject<undefined>; key: num... Remove this comment to see the full error message
+              // @ts-expect-error TS(2740): Type 'number[]' is missing the following propertie... Remove this comment to see the full error message
               rotation={[Math.PI * gaussianRand(), Math.PI * gaussianRand(), 0]}
             />
+            
+            {/* <Ttext /> */}
           </>
         );
       })}
@@ -310,6 +313,7 @@ const TraitBlanc = forwardRef<Ref2, Props2>(({ rotation, position }, ref) => {
     if (ref2.current) {
       ref2.current.geometry.setFromPoints(points);
 
+      // @ts-expect-error TS(2363): The right-hand side of an arithmetic operation mus... Remove this comment to see the full error message
       ref2.current.rotation.z = (Math.PI * [2 * Math.random() - 1]) / 4;
     }
   }
@@ -325,10 +329,10 @@ const TraitBlanc = forwardRef<Ref2, Props2>(({ rotation, position }, ref) => {
   });
 
   return (
-    // @ts-expect-error TS(2322): Type 'MutableRefObject<undefined>' is not assignab... Remove this comment to see the full error message
+    // @ts-expect-error TS(2322): Type 'MutableRefObject<Mesh<BufferGeometry<NormalB... Remove this comment to see the full error message
     <line key={Math.random()} ref={ref2}>
       <bufferGeometry attach="geometry" />
-      <lineBasicMaterial linewidth="10.0" color="white" />
+      <lineBasicMaterial linewidth={10.0} color="white" />
     </line>
   );
 });
