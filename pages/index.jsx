@@ -125,7 +125,7 @@ function Home() {
               lineHeight: "normal",
             }}
           >
-            Site non optimisé pour Smartphoneee. Merci de revenir consulter cette
+            Site non optimisé pour Smartphone. Merci de revenir consulter cette
             page sur PC !
           </span>
         </div>

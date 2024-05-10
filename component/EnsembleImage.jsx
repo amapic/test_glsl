@@ -15,9 +15,7 @@ import {
 } from "@react-three/fiber";
 import WaveShaderMaterial from "../component/shader";
 extend({ WaveShaderMaterial });
-import {
-  Text,
-} from "@react-three/drei";
+
 import Ttext from "./Ttext"
 import {TextureLoader,SRGBColorSpace} from "three";
 import { lerp, damp } from "three/src/math/MathUtils";
