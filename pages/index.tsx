@@ -1,24 +1,20 @@
 import dynamic from "next/dynamic";
 import Head from "next/head";
 import { Vector3 } from "three";
-// import { RGBELoader } from "three/examples/jsm/loaders/RGBELoader";
 import { Html } from "@react-three/drei";
 import {
   useEffect,
   useRef,
   useMemo,
-  useState,
   forwardRef,
   useLayoutEffect,
   Suspense,
 } from "react";
-
+import * as THREE from "three";
 import {
   Canvas,
-  useLoader,
   useFrame,
   extend,
-  useThree,
 } from "@react-three/fiber";
 // import {
 //   postprocessing,
@@ -34,9 +30,9 @@ import RoundedBoxGeometry from "./../boxgeo.js";
 
 // import { OrbitControls } from "@react-three/drei";
 import { useMediaQuery } from "react-responsive";
-// @ts-expect-error TS(2614): Module '"../component/EnsembleImage"' has no expor... Remove this comment to see the full error message
-import { EnsembleImage } from "../component/EnsembleImage";
-import Ttext from "../component/Ttext";
+
+import  EnsembleImage  from "../component/EnsembleImage";
+// import Ttext from "../component/Ttext";
 extend({ RoundedBoxGeometry });
 
 interface Props {
@@ -96,7 +92,7 @@ function Home() {
         <link rel="shortcut icon" href="/slide/favicon.ico" />
       </Head>
 
-      {!isTabletOrMobile && (
+      {/* {!isTabletOrMobile && ( */}
         <>
           <div
             id="menu"
@@ -154,9 +150,9 @@ function Home() {
             <div className="greybar"></div>
           </div>
         </>
-      )}
+      {/* )} */}
 
-      {isTabletOrMobile && (
+      {/* {isTabletOrMobile && (
         <div
           style={{
             backgroundColor: "white",
@@ -178,7 +174,7 @@ function Home() {
             page sur PC !
           </span>
         </div>
-      )}
+      )} */}
     </>
   );
 }
@@ -186,13 +182,12 @@ function Home() {
 const Delayed = ({ start }: any) => {
   return (
     <>
-      <Html center className="loading" children="Loading..." />
+      <Html center className="loading" children="Chargement..." />
     </>
   );
 };
 
 export function TextureScene({ start }: any) {
-  // const camera_x = useRef(0);
   var camera_x;
   var tt = null;
   const ref33 = useRef();
@@ -202,11 +197,7 @@ export function TextureScene({ start }: any) {
   });
 
   useEffect(() => {
-    // let timeout = setTimeout(() => setShow(true), 300);
-    // return () => {
-    //   clearTimeout(timeout);
-    // };
-    // start;
+
     const millis = Date.now() - start;
 
     console.log(`seconds elapsed = ${millis / 1000}`);
@@ -226,7 +217,7 @@ export function TextureScene({ start }: any) {
       <ambientLight intensity={1} />
       <spotLight position={[10, 10, 10]} angle={45} penumbra={0} />
       {/* <axesHelper args={[5]} /> */}
-      <EnsembleImage position={[0, 0, -20]} camera_x={camera_x} />
+      <EnsembleImage position={new THREE.Vector3(0, 0, -20)} camera_x={camera_x}  />
 
       {[...Array(3)].map((x, i) => {
         return (

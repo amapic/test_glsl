@@ -7,6 +7,7 @@ import {
   useLayoutEffect,
 } from "react";
 
+
 import {
   Canvas,
   useLoader,
@@ -14,48 +15,31 @@ import {
   extend,
   useThree,
 } from "@react-three/fiber";
-import WaveShaderMaterial from "./shader";
+import WaveShaderMaterial from "../component/shader";
 extend({ WaveShaderMaterial });
-import { Text } from "@react-three/drei";
+import {
+  Text,
+} from "@react-three/drei";
 
-import Ttext from "./Ttext";
-import { TextureLoader, SRGBColorSpace } from "three";
+import Ttext from "./Ttext"
+import {TextureLoader,SRGBColorSpace} from "three";
 import { lerp, damp } from "three/src/math/MathUtils";
 import { Physics } from "@react-three/cannon";
-
-interface KK extends THREE.Material {
-  uTime: number;
-  compteurCycle: number;
-}
-
-type MeshModified = THREE.Mesh<
-  THREE.BufferGeometry,
-  KK,
-  THREE.Object3DEventMap
->;
-
-
-export default function EnsembleImage({
-  position,
-  camera_x,
-}: {
-  position: THREE.Vector3;
-  camera_x: number;
-}): JSX.Element {
-  const ref = useRef<THREE.Group>(null);
+function EnsembleImage({ position, camera_x }) {
+  const ref = useRef();
 
   const mouseTarget = useRef({ x: 0, y: 0 });
   const mouse = useRef({ x: 0, y: 0 });
 
   const compteurCycle = useRef(1);
 
-  const couche1 = useRef<MeshModified>(null!);
+  const couche1 = useRef();
 
-  const couche2 = useRef<MeshModified>(null!);
+  const couche2 = useRef();
 
-  const couche3 = useRef<MeshModified>(null!);
+  const couche3 = useRef();
 
-  const couche3_bis = useRef<MeshModified>(null!);
+  const couche3_bis = useRef();
 
   const listeRef = [couche1, couche2, couche3, couche3_bis];
 
@@ -85,11 +69,8 @@ export default function EnsembleImage({
     });
 
     for (let i = 0; i < listeRef.length; i++) {
-      if (listeRef[i].current != null) {
-        // @ts-expect-error TS(2532): Object is possibly 'undefined'.
-        listeRef[i].current.material.resolution =
-          window.innerHeight / window.innerWidth;
-      }
+      listeRef[i].current.material.resolution =
+        window.innerHeight / window.innerWidth;
     }
   });
 
@@ -97,16 +78,12 @@ export default function EnsembleImage({
     delayClock.current += delta;
 
     for (let i = 0; i < listeRef.length; i++) {
-      if (listeRef[i].current != null) {
-        listeRef[i].current.material.uTime = state.clock.getElapsedTime();
-      }
+      listeRef[i].current.material.uTime = state.clock.getElapsedTime();
     }
 
     if (couche2.current.material.compteurCycle == 0) {
       for (let i = 0; i < listeRef.length; i++) {
-        if (listeRef[i].current != null) {
-          listeRef[i].current.material.compteurCycle = compteurCycle.current;
-        }
+        listeRef[i].current.material.compteurCycle = compteurCycle.current;
       }
     }
 
@@ -150,13 +127,11 @@ export default function EnsembleImage({
     );
   });
 
-  // @ts-expect-error TS(2345): Argument of type 'typeof TextureLoader' is not ass... Remove this comment to see the full error message
   const image = useLoader(TextureLoader, "/slide/concat9.avif");
   image.colorSpace = SRGBColorSpace;
 
   const image_size = [1024 / 10, 742 / 10];
 
-  // @ts-expect-error TS(2345): Argument of type 'typeof TextureLoader' is not ass... Remove this comment to see the full error message
   const mask = useLoader(TextureLoader, "/slide/mask5.avif");
   mask.colorSpace = SRGBColorSpace;
 
@@ -179,13 +154,11 @@ export default function EnsembleImage({
   // mask.colorSpace = THREE.SRGBColorSpace;
 
   return (
-    <>
-      <group position={[0, 0, -20]} ref={ref}>
-        <Physics allowSleep={false} gravity={[0, 0, 0]}>
-          <Ttext />
-        </Physics>
+    <group position={position} ref={ref}>
+      <Physics allowSleep={false} gravity={[0, 0, 0]}>
+        <Ttext  />
+      </Physics>
 
-        
       <mesh ref={couche1} position={[0, 0, 4]}>
         <planeGeometry args={[image_size[0], image_size[1], 1, 1]} />
         <waveShaderMaterial
@@ -271,9 +244,10 @@ export default function EnsembleImage({
           // image1={image1}
         />
       </mesh>
-      </group>
-    </>
+    </group>
   );
 }
+
+export default EnsembleImage;
 
 
