@@ -9,30 +9,16 @@ import {
   forwardRef,
   useLayoutEffect,
   Suspense,
+  useState,
 } from "react";
 import * as THREE from "three";
-import {
-  Canvas,
-  useFrame,
-  extend,
-} from "@react-three/fiber";
-// import {
-//   postprocessing,
-//   EffectComposer,
-//   Bloom,
-// } from "@react-three/postprocessing";
-// import { GLSL } from "gl-react";
-// import { lerp, damp } from "three/src/math/MathUtils";
-// import { useControls } from "leva";
-// import WaveShaderMaterial from "../component/shader2";
-import RoundedBoxGeometry from "./../boxgeo.js";
-// import CookieConsent from "../component/CookieConsent";
+import { Canvas, useFrame, extend, addEffect } from "@react-three/fiber";
 
-// import { OrbitControls } from "@react-three/drei";
+import RoundedBoxGeometry from "./../boxgeo.js";
+
 import { useMediaQuery } from "react-responsive";
 
-import  EnsembleImage  from "../component/EnsembleImage";
-// import Ttext from "../component/Ttext";
+import EnsembleImage from "../component/EnsembleImage";
 extend({ RoundedBoxGeometry });
 
 interface Props {
@@ -63,96 +49,161 @@ function Home() {
     };
   }, []);
 
+  const [isFullscreen, setIsFullscreen] = useState(false);
+
   const start = Date.now();
-  const isTabletOrMobile = useMediaQuery({ query: "(max-width: 1224px)" });
+  // const isTabletOrMobile = useMediaQuery({ query: "(max-width: 1224px)" });
+  const isMobile = () => {
+    return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+      navigator.userAgent
+    );
+  };
 
-  useEffect(() => {
-    var first = true;
-    // if (first) {
-    //   for (let pas = 0; pas < 110; pas = pas + 1) {
-    //     setTimeout(() => {
-    //       document.querySelector(".greybar").style.width = pas + "vw";
-    //     }, 80 * pas);
-    //   }
+  // useEffect(() => {
+  //   // Fonction pour détecter si on est sur mobile
+  //   // const isMobile = () => {
+  //   //   return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+  //   //     navigator.userAgent
+  //   //   );
+  //   // };
 
-    //   setTimeout(() => {
-    //     document.querySelector(".wrapGreybar").style.display = "none";
-    //     document.querySelector("#div_canvas").style.visibility = "visible";
-    //     document.querySelector("#menu").style.visibility = "visible";
-    //     // document.querySelector("#div_canvas").style.display = "block";
-    //   }, 8000);
-    // }
-  });
+  //   // Fonction pour forcer le mode paysage
+  //   const forceLandscape = async () => {
+  //     if (isMobile()) {
+  //       // On applique uniquement sur mobile
+  //       try {
+  //         if (screen.orientation && "lock" in screen.orientation) {
+  //           await (screen.orientation as any).lock("landscape");
+  //           alert(screen.orientation.type);
+  //         }
+  //       } catch (err) {
+  //         alert(err);
+  //         console.log("Orientation lock failed:", err);
+  //       }
+  //     }
+  //   };
+
+  //   // Appliquer au chargement
+  //   // forceLandscape();
+
+  //   // Réappliquer lors des changements d'orientation
+  //   // window.addEventListener('orientationchange', forceLandscape);
+
+  //   return () => {
+  //     // window.removeEventListener('orientationchange', forceLandscape);
+  //   };
+  // }, []);
+
+  const handleLockOrientation = async () => {
+    setIsFullscreen(!isFullscreen);
+    if (!isFullscreen) {
+      try {
+        // Demander le mode plein écran d'abord
+        await document.documentElement.requestFullscreen();
+
+        // Puis verrouiller l'orientation
+        if (screen.orientation && "lock" in screen.orientation) {
+          await (screen.orientation as any).lock("landscape");
+          // alert(screen.orientation.type);
+        }
+      } catch (err) {
+        alert(err);
+        console.log("Orientation lock failed:", err);
+      }
+    } else {
+      try {
+        await document.exitFullscreen();
+      } catch (err) {
+        alert(err);
+      }
+    }
+  };
 
   return (
     <>
       {/* <CookieConsent /> */}
       <Head>
-        <title>Book A.PICHAT</title>
+        <title>Exemple A.PICHAT</title>
         <link rel="shortcut icon" href="/slide/favicon.ico" />
+        <meta
+          name="viewport"
+          content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0, user-scalable=no"
+        />
+        <meta name="orientation" content="landscape" />
       </Head>
 
-      {/* {!isTabletOrMobile && ( */}
-        <>
+      {/* {!isMobile && ( */}
+      <>
+        <div
+          id="menu"
+          className="flex flex-col space-y-1 justify-center fixed top-2 right-2 bg-white rounded-full px-2 m-1 z-50 cursor-pointer"
+          style={{
+            height: "32px",
+            width: "32px",
+          }}
+        >
           <div
-            id="menu"
-            className="flex flex-col space-y-1 justify-center fixed top-2 right-2 bg-white rounded-full px-2 m-1 z-50 cursor-pointer"
+            className="w-full bg-black"
             style={{
-              height: "32px",
-              width: "32px",
+              height: "2px",
+            }}
+          ></div>
+          <div
+            style={{
+              height: "2px",
+            }}
+            className="w-full bg-black"
+          ></div>
+          <div
+            style={{
+              height: "2px",
+            }}
+            className="w-full bg-black"
+          ></div>
+        </div>
+        <div
+          id="div_canvas"
+          style={{
+            background: "black",
+            height: "100vh",
+            width: "100vw",
+            position: "fixed",
+          }}
+        >
+          <Canvas
+            gl={{ antialias: true }}
+            camera={{
+              near: 0.1,
+              far: 20000,
+              zoom: 1,
+              position: [0, 0, 20],
+              // @ts-expect-error TS(2322): Type '{ near: number; far: number; zoom: number; p... Remove this comment to see the full error message
+              maxPolarAngle: 0.85,
+              frameloop: isMobile() ? "demand" : "always",
             }}
           >
-            <div
-              className="w-full bg-black"
-              style={{
-                height: "2px",
-              }}
-            ></div>
-            <div
-              style={{
-                height: "2px",
-              }}
-              className="w-full bg-black"
-            ></div>
-            <div
-              style={{
-                height: "2px",
-              }}
-              className="w-full bg-black"
-            ></div>
-          </div>
-          <div
-            id="div_canvas"
-            style={{
-              background: "black",
-              height: "100vh",
-              width: "100vw",
-              position: "fixed",
-            }}
+            <Suspense fallback={<Delayed />}>
+              <TextureScene start={start} isMobile={isMobile} />
+            </Suspense>
+          </Canvas>
+        </div>
+        <div className="wrapGreybar">
+          <div className="greybar"></div>
+        </div>
+        {isMobile() && (
+          <button
+            onClick={handleLockOrientation}
+            className="fixed top-4 left-4 z-50 bg-white p-2 rounded text-black"
           >
-            <Canvas
-              gl={{ antialias: true }}
-              camera={{
-                near: 0.1,
-                far: 20000,
-                zoom: 1,
-                position: [0, 0, 20],
-                // @ts-expect-error TS(2322): Type '{ near: number; far: number; zoom: number; p... Remove this comment to see the full error message
-                maxPolarAngle: 0.85,
-              }}
-            >
-              <Suspense fallback={<Delayed />}>
-                <TextureScene start={start} />
-              </Suspense>
-            </Canvas>
-          </div>
-          <div className="wrapGreybar">
-            <div className="greybar"></div>
-          </div>
-        </>
+            {isFullscreen
+              ? "Quitter le mode paysage"
+              : "Passer en mode paysage"}
+          </button>
+        )}
+      </>
       {/* )} */}
 
-      {/* {isTabletOrMobile && (
+      {/* {isMobile && (
         <div
           style={{
             backgroundColor: "white",
@@ -187,17 +238,38 @@ const Delayed = ({ start }: any) => {
   );
 };
 
-export function TextureScene({ start }: any) {
+export function TextureScene({ start, isMobile }: any) {
   var camera_x;
   var tt = null;
   const ref33 = useRef();
+
+  useEffect(() => {
+    // Limiter à 30 FPS
+    if (isMobile()) {
+      const interval = 1000 / 30; // 33.33ms par frame
+      let then = performance.now();
+
+      const unsubscribe = addEffect(() => {
+        const now = performance.now();
+        const delta = now - then;
+
+        if (delta < interval) {
+          return false; // Skip this frame
+        }
+
+        then = now - (delta % interval);
+        return true; // Render this frame
+      });
+
+      return () => unsubscribe();
+    }
+  }, []);
 
   useFrame((state) => {
     camera_x = state.camera.position.x;
   });
 
   useEffect(() => {
-
     const millis = Date.now() - start;
 
     console.log(`seconds elapsed = ${millis / 1000}`);
@@ -217,7 +289,10 @@ export function TextureScene({ start }: any) {
       <ambientLight intensity={1} />
       <spotLight position={[10, 10, 10]} angle={45} penumbra={0} />
       {/* <axesHelper args={[5]} /> */}
-      <EnsembleImage position={new THREE.Vector3(0, 0, -20)} camera_x={camera_x}  />
+      <EnsembleImage
+        position={new THREE.Vector3(0, 0, -20)}
+        camera_x={camera_x}
+      />
 
       {[...Array(3)].map((x, i) => {
         return (
@@ -225,10 +300,11 @@ export function TextureScene({ start }: any) {
             <TraitBlanc
               ref={ref33}
               key={Math.random()}
+              isMobile={isMobile()}
               // @ts-expect-error TS(2740): Type 'number[]' is missing the following propertie... Remove this comment to see the full error message
               rotation={[Math.PI * gaussianRand(), Math.PI * gaussianRand(), 0]}
             />
-            
+
             {/* <Ttext /> */}
           </>
         );
@@ -240,93 +316,96 @@ export function TextureScene({ start }: any) {
 interface Props2 {
   rotation: THREE.Euler;
   position: THREE.Vector3;
+  isMobile: boolean;
 }
 type Ref2 = THREE.Mesh;
-const TraitBlanc = forwardRef<Ref2, Props2>(({ rotation, position }, ref) => {
-  const ref2 = useRef<THREE.Mesh>();
-  let points = [];
-  let direction: any;
-  //vitesse de déplacement
-  let speed = 0.1 * (1 + 2 * Math.random());
-  //espace entre les deux points
-  let llength;
-  //espace entre les deux points
-  let length = 1 + 5 * Math.random();
-  let posCercle = (Math.PI * Math.random()) / 4;
+const TraitBlanc = forwardRef<Ref2, Props2>(
+  ({ rotation, position, isMobile }, ref) => {
+    const ref2 = useRef<THREE.Mesh>();
+    let points = [];
+    let direction: any;
+    //vitesse de déplacement
+    let speed = 0.1 * (1 + 2 * Math.random());
+    //espace entre les deux points
+    let llength;
+    //espace entre les deux points
+    let length = 1 + 5 * Math.random();
+    let posCercle = (Math.PI * Math.random()) / 4;
 
-  let centreSphere1 = [
-    25 * Math.random(),
-    25 * Math.random(),
-    25 * Math.random(),
-  ];
-  // let centreSphere2=[];
-
-  let point2;
-
-  let point1;
-
-  useLayoutEffect(() => {
-    Inittt();
-  }, []);
-
-  function Inittt() {
-    posCercle = (Math.PI * Math.random()) / 4;
-
-    point2 = [
-      centreSphere1[0] + 50 * Math.cos(posCercle),
-      centreSphere1[1] + 50 * Math.sin(posCercle),
-      0,
+    let centreSphere1 = [
+      25 * Math.random(),
+      25 * Math.random(),
+      25 * Math.random(),
     ];
-    point1 = [
-      centreSphere1[0] + 100 * Math.cos(posCercle) * length,
-      centreSphere1[1] + 100 * Math.sin(posCercle) * length,
-      0,
-    ];
+    // let centreSphere2=[];
 
-    direction = [
-      point2[0] - point1[0],
-      point2[1] - point1[1],
-      point2[2] - point1[2],
-    ];
+    let point2;
 
-    llength = (direction[0] + direction[1] + direction[2]) / 3;
+    let point1;
 
-    direction[0] = speed * (direction[0] / llength);
+    useLayoutEffect(() => {
+      Inittt();
+    }, []);
 
-    direction[1] = speed * (direction[1] / llength);
+    function Inittt() {
+      posCercle = (Math.PI * Math.random()) / 4;
 
-    direction[2] = speed * (direction[2] / llength);
+      point2 = [
+        centreSphere1[0] + 50 * Math.cos(posCercle),
+        centreSphere1[1] + 50 * Math.sin(posCercle),
+        0,
+      ];
+      point1 = [
+        centreSphere1[0] + 100 * Math.cos(posCercle) * length,
+        centreSphere1[1] + 100 * Math.sin(posCercle) * length,
+        0,
+      ];
 
-    points = [
-      new Vector3(point1[0], point1[1], point1[2]),
-      new Vector3(point2[0], point2[1], point2[2]),
-    ];
-    if (ref2.current) {
-      ref2.current.geometry.setFromPoints(points);
+      direction = [
+        point2[0] - point1[0],
+        point2[1] - point1[1],
+        point2[2] - point1[2],
+      ];
 
-      // @ts-expect-error TS(2363): The right-hand side of an arithmetic operation mus... Remove this comment to see the full error message
-      ref2.current.rotation.z = (Math.PI * [2 * Math.random() - 1]) / 4;
+      llength = (direction[0] + direction[1] + direction[2]) / 3;
+
+      direction[0] = speed * (direction[0] / llength);
+
+      direction[1] = speed * (direction[1] / llength);
+
+      direction[2] = speed * (direction[2] / llength);
+
+      points = [
+        new Vector3(point1[0], point1[1], point1[2]),
+        new Vector3(point2[0], point2[1], point2[2]),
+      ];
+      if (ref2.current) {
+        ref2.current.geometry.setFromPoints(points);
+
+        // @ts-expect-error TS(2363): The right-hand side of an arithmetic operation mus... Remove this comment to see the full error message
+        ref2.current.rotation.z = (Math.PI * [2 * Math.random() - 1]) / 4;
+      }
     }
+
+    useFrame(() => {
+      if (ref2.current) {
+        ref2.current.geometry.translate(
+          -direction[0],
+          -direction[1],
+          -direction[2]
+        );
+      }
+    });
+
+    return (
+      // @ts-expect-error TS(2322): Type 'MutableRefObject<Mesh<BufferGeometry<NormalB... Remove this comment to see the full error message
+      <line key={Math.random()} ref={ref2}>
+        <bufferGeometry attach="geometry" />
+        <lineBasicMaterial linewidth={isMobile ? 1.0 : 10.0} color="white" />
+      </line>
+    );
   }
-
-  useFrame(() => {
-    if (ref2.current) {
-      ref2.current.geometry.translate(
-        -direction[0],
-        -direction[1],
-        -direction[2]
-      );
-    }
-  });
-
-  return (
-    // @ts-expect-error TS(2322): Type 'MutableRefObject<Mesh<BufferGeometry<NormalB... Remove this comment to see the full error message
-    <line key={Math.random()} ref={ref2}>
-      <bufferGeometry attach="geometry" />
-      <lineBasicMaterial linewidth={10.0} color="white" />
-    </line>
-  );
-});
+);
 
 export default dynamic(() => Promise.resolve(Home), {
   ssr: false,

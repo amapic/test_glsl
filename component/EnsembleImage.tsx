@@ -1,14 +1,10 @@
 import {
   useEffect,
   useRef,
-  useMemo,
   useState,
-  forwardRef,
-  useLayoutEffect,
 } from "react";
 
 import {
-  Canvas,
   useLoader,
   useFrame,
   extend,
@@ -16,7 +12,6 @@ import {
 } from "@react-three/fiber";
 import WaveShaderMaterial from "./shader";
 extend({ WaveShaderMaterial });
-import { Text } from "@react-three/drei";
 
 import Ttext from "./Ttext";
 import { TextureLoader, SRGBColorSpace } from "three";
@@ -34,15 +29,48 @@ type MeshModified = THREE.Mesh<
   THREE.Object3DEventMap
 >;
 
+declare global {
+  namespace JSX {
+    interface IntrinsicElements {
+      waveShaderMaterial: {
+        uTexture: any;
+        fond: boolean;
+        toneMapped: boolean;
+        camera_x: number;
+        compteurCycle: number;
+        filigrane: boolean;
+        color: string;
+        _resolution: number;
+        mobile: boolean;
+        transparent?: boolean;
+      } & JSX.IntrinsicElements['meshStandardMaterial']
+    }
+  }
+}
 
 export default function EnsembleImage({
-  position,
   camera_x,
 }: {
   position: THREE.Vector3;
   camera_x: number;
 }): JSX.Element {
   const ref = useRef<THREE.Group>(null);
+
+  const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
+  const [isMobile, setIsMobile] = useState(false);
+  useEffect(() => {
+    setDimensions({
+      width: window.innerWidth,
+      height: window.innerHeight
+    });
+
+    const isMobile = () => {
+      return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+        navigator.userAgent
+      );
+    };
+    setIsMobile(isMobile());
+  }, []);
 
   const mouseTarget = useRef({ x: 0, y: 0 });
   const mouse = useRef({ x: 0, y: 0 });
@@ -59,7 +87,7 @@ export default function EnsembleImage({
 
   const listeRef = [couche1, couche2, couche3, couche3_bis];
 
-  var viewport = useThree((state) => state.viewport);
+  // var viewport = useThree((state) => state.viewport);
 
   const delayClock = useRef(0);
 
@@ -155,6 +183,7 @@ export default function EnsembleImage({
   image.colorSpace = SRGBColorSpace;
 
   const image_size = [1024 / 10, 742 / 10];
+  // const image_size = [dimensions.width /10 , dimensions.height /10 ];
 
   // @ts-expect-error TS(2345): Argument of type 'typeof TextureLoader' is not ass... Remove this comment to see the full error message
   const mask = useLoader(TextureLoader, "/slide/mask5.avif");
@@ -190,7 +219,7 @@ export default function EnsembleImage({
         <planeGeometry args={[image_size[0], image_size[1], 1, 1]} />
         <waveShaderMaterial
           // ref={shader2}
-          uAlphaMap={image}
+          // uAlphaMap={image}
           // map={image}
           // map2={image2}
           // image3={image3}
@@ -203,6 +232,7 @@ export default function EnsembleImage({
           color="black"
           filigrane={false}
           _resolution={0.0}
+          mobile={isMobile}
           // transition_shape={transition_shape}
         />
       </mesh>
@@ -211,7 +241,7 @@ export default function EnsembleImage({
         <planeGeometry args={[image_size[0], image_size[1], 1, 1]} />
         <waveShaderMaterial
           // ref={shader3}
-          uAlphaMap={image}
+          // uAlphaMap={image}
           // map={map}
           // map2={image2}
           uTexture={image}
@@ -223,6 +253,7 @@ export default function EnsembleImage({
           filigrane={false}
           color="black"
           _resolution={0.0}
+          mobile={isMobile}
           // transition_shape={transition_shape}
           // image3={image3}
           // image1={image1}
@@ -233,7 +264,7 @@ export default function EnsembleImage({
         <planeGeometry args={[image_size[0], image_size[1], 1, 1]} />
         <waveShaderMaterial
           // ref={shader}
-          uAlphaMap={image}
+          // uAlphaMap={image}
           // map={map}
           // map2={image2}
           uTexture={image}
@@ -245,6 +276,7 @@ export default function EnsembleImage({
           filigrane={false}
           color="black"
           _resolution={0.0}
+          mobile={isMobile}
           // transition_shape={transition_shape}
           // image3={image3}
           // image1={image1}
@@ -254,7 +286,7 @@ export default function EnsembleImage({
       <mesh ref={couche3_bis} position={[0, 0, 12.1]}>
         <planeGeometry args={[image_size[0], image_size[1], 1, 1]} />
         <waveShaderMaterial
-          uAlphaMap={image}
+          // uAlphaMap={image}
           // map={map}
           // map2={image2}
           uTexture={image}
@@ -266,6 +298,7 @@ export default function EnsembleImage({
           filigrane={true}
           color="black"
           _resolution={0.0}
+          mobile={isMobile}
           // transition_shape={transition_shape}
           // image3={image3}
           // image1={image1}
