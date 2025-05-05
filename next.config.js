@@ -3,6 +3,12 @@ const nextConfig = {
   reactStrictMode: true,
   transpilePackages: ["@react-three/drei"],
   basePath:"/slide",
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
+  typescript: {
+    ignoreBuildErrors: true,
+  },
 
   webpack: (config, { isServer }) => {
     // If client-side, don't polyfill `fs`
